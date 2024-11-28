@@ -1,0 +1,87 @@
+{% extends "ComplaintMS/index.html" %}
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+{% block content %}
+<style>
+body
+{
+
+    background-color: #ffffff !important;
+
+}
+H1,H2,H3{
+    color:rgb(116, 116, 116);
+    padding:10px;
+}
+img{
+  width:100%;
+  height:100%;
+}
+.card
+{
+  border:#007bff !important;
+}
+a {
+  color:black;
+  font-weight:bold;
+
+
+     color: #000;
+     padding: 1px;
+}
+#middle{
+  left: 0;
+
+    margin-top: -100px;
+    position: absolute;
+
+    top: 50%;
+    width: 100%;
+}
+</style>
+<br>
+          {% load static %}
+          <!-- <div id="middle"> -->
+ <div id="page-content-wrapper">
+
+    <br>
+    <div class="container">
+      <div class="card">
+        <div class="card-body">
+
+          <h4>About GEyan</h4>
+          <hr>
+
+<br><br>
+          <p>The GEyan project is an innovative and comprehensive digital platform developed to assist school students in making informed career decisions by connecting them with faculty members from Graphic Era University. This platform is designed to create an accessible, interactive, and personalized environment where students can freely ask questions and seek guidance related to their career paths, college admissions, and future prospects. Through this portal, students are able to receive insightful advice from experienced faculty, thus bridging the gap between secondary education and higher education.</p>
+          <br>
+            <p>A core feature of the GEyan platform is its real-time communication system, where students can ask career-related queries to teachers from Graphic Era University. Whether students are curious about specific fields of study, required skills, or possible career outcomes, they can interact directly with faculty members who offer expert advice, tailored to each student's needs. This allows students to get accurate, personalized responses that are valuable for making critical decisions about their academic future.</p>
+            <br>
+            <p>The platform also includes the HEAT test (Higher Education Aptitude Test), an essential tool for students to assess their academic skills and readiness for higher education. The HEAT test evaluates students on various subjects, including general knowledge, logical reasoning, and subject-specific competencies. This test helps students understand their strengths and areas of improvement, providing valuable insights that can guide them towards the right academic and career choices.</p>
+            <br>
+            <p>Moreover, GEyan offers students the opportunity to participate in career guidance seminars hosted by Graphic Era Hill University. These seminars are designed to provide students with expert-led discussions on various career paths, industry trends, and higher education opportunities. By attending these seminars, students can expand their knowledge, gain inspiration, and network with professionals, further enhancing their career awareness. Upon completing a seminar or career guidance session, students receive a personalized certificate, which can be used for their academic portfolio or shared with potential employers.</p>
+            <br>
+            <p>An exciting addition to the GEyan platform is the integration of an AI-powered chatbot. This chatbot is equipped with advanced sentiment analysis capabilities, allowing it to provide an interactive and empathetic user experience. Students can engage with the chatbot to ask career-related questions, just as they would with a faculty member. The AI chatbot is designed to handle a wide variety of inquiries, offering quick and helpful responses.</p>
+            <br>
+            <p>One of the most unique features of the chatbot is its ability to analyze the sentiment and tone of a student’s questions. Using sentiment analysis, the system can detect emotions such as frustration, excitement, or confusion in a student's query. This provides teachers with valuable insights into the emotional state of the student, helping them understand not only the content of the inquiry but also the mood and urgency behind it. For example, if a student is expressing frustration about their career prospects or seeking urgent guidance, the platform can alert teachers to prioritize such questions, ensuring that they provide the most supportive and timely response possible.</p><br>
+            <p>In addition to offering personalized advice and testing, GEyan also fosters a sense of community by allowing students to connect with teachers in a more informal, accessible manner. Students can feel comfortable asking questions that they might otherwise hesitate to ask in a classroom setting. The sentiment analysis feature makes the communication even more personalized, as it allows the system to adapt its responses based on the emotional tone of the query.</p>
+            <br>
+            <p>The GEyan project aims to provide an all-encompassing, easy-to-use platform that combines career guidance, skill assessment, personalized learning experiences, and emotional intelligence to ensure that every student has the tools and support they need to succeed in their educational journey. By combining expert human advice with cutting-edge AI technology, GEyan provides students with a comprehensive career support system that prepares them for the challenges of higher education and the workforce.</p>
+            <canvas id="certificateCanvas" style="display: none;"></canvas>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+  {% endblock %}

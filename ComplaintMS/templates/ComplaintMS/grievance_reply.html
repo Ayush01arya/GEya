@@ -1,0 +1,14 @@
+<!-- templates/grievance_reply.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Reply to Feedback: {{ complaint.title }}</h2>
+  <p><strong>Description:</strong> {{ complaint.description }}</p>
+  <p><strong>Date Filed:</strong> {{ complaint.date_filed }}</p>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Submit Reply</button>
+  </form>
+{% endblock %}

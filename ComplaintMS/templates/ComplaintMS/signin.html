@@ -1,0 +1,52 @@
+{% extends "ComplaintMS/index.html" %}
+
+{% load crispy_forms_tags %}
+{% load static %}
+
+<style>
+    body {
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
+</style>
+
+{% block content %}
+<br>
+<div class="container-fluid">
+    {% for message in messages %}
+    <div{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>
+        <a class="close" data-dismiss="alert" href="#">&times;</a>
+        {{ message }}
+    </div>
+    {% endfor %}
+
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="content-section">
+                <form method="POST">
+                    {% csrf_token %}
+                    {% if user.is_authenticated %}
+                    <h3 class="text-center">You are already logged in. First logout to switch accounts?</h3>
+                    {% else %}
+                    <fieldset class="form-group">
+                        <legend class="border-bottom mb-4 text-center">Log In as Student/Staff Member</legend>
+                        {{ form|crispy }}
+                    </fieldset>
+                    <div class="form-group">
+                        <button class="btn btn-success btn-block" type="submit">Login</button>
+                    </div>
+                    {% endif %}
+                </form>
+                <div class="border-top pt-3 text-center">
+                    <small>
+                        Need an Account? <a class="ml-2" href="{% url 'register' %}">Register Now</a>
+                        <div class="text-muted">
+                            <a href="{% url 'password_reset' %}">Forgot Password?</a>
+                        </div>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

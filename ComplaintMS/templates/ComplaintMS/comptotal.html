@@ -1,0 +1,135 @@
+{% extends "ComplaintMS/index.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block content %}
+<style>
+
+</style>
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>All Question</title>
+   
+  <!-- Bootstrap core CSS -->
+  <link href= "{% static "ComplaintMS/extra/bootstrap/css/bootstrap.min.css" %}" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="{% static "ComplaintMS/css/simple-sidebar.css" %}" rel="stylesheet">
+
+</head>
+
+
+  <div class="d-flex" id="wrapper">
+
+    <!-- Sidebar -->
+    <div class="bg-light border-right" id="sidebar-wrapper">
+      <div class="sidebar-heading"> <i>GEyan</i> </div>
+      <div class="list-group list-group-flush">
+        {% if user.is_authenticated  %}
+			     <a href="" class="list-group-item list-group-item-action active"> Welcome : {{user.username}} </a>
+              <a href='/dashboard/' class="list-group-item list-group-item-action">Profile</a>
+              <a href='/password/' class="list-group-item list-group-item-action">Password Reset</a>
+
+              <a href="/askme/" class="list-group-item list-group-item-action">Ask Question </a>
+              <a href="/list/" class="list-group-item list-group-item-action">UnSolved Question's</a>
+              <a href="/slist/" class="list-group-item list-group-item-action">Solved Question's</a>
+           <a href="/certificate/" class="list-group-item list-group-item-action">certificate</a>
+          <a href="/heat/" class="list-group-item list-group-item-action">HEAT</a>
+
+
+              {% endif %}
+              
+      </div>
+    </div>
+    <!-- /#sidebar-wrapper -->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+     
+      <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+        <button class="btn btn-primary" id="menu-toggle"><span class="glyphicon glyphicon-align-justify"></span>➡️</button>
+       &nbsp;&nbsp;&nbsp;&nbsp;
+	
+ 	</nav>
+	  <br>
+	  <div class="col-12">
+		    <div class="card">
+		        <div class="card-body">
+		            <div class="row">
+		         <!--Ayush Arya -->
+		                <div class="col-md-12">
+		                    <h4 class="text-dark"><b>Ask Question :</b></h4>
+													
+		                    <hr>
+												<div class="row m-1">
+											<div>
+
+						
+		                </div>
+		          </div>
+		            <div class="row">
+		                <div class="col-md-12" style="margin:10px">
+						{% if messages %}
+<ul>
+	{% for message in messages %}
+	   <div{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>
+	   <a class="close" data-dismiss="alert" href="#">&times;</a>
+      {{ message }}
+    </div>
+	{% endfor %}
+</ul>
+{% endif %}
+             <form method="post">
+    {% csrf_token %}
+    
+		
+    
+        {{ complaint_form|crispy }}
+      
+     
+    <button type="submit" class="btn btn-success m-1">Submit</button>
+		
+
+  </form>
+
+               
+			
+				
+				
+            
+		                </div>
+		            </div>
+		            
+		        </div>
+		    </div>
+		</div>
+	</div>
+</div>
+<!--Ayush Arya -->
+  <!-- Menu Toggle Script -->
+  <script>
+    $("#menu-toggle").click(function(e) {
+      e.preventDefault();
+      $("#wrapper").toggleClass("toggled");
+    });
+  </script>
+
+		
+{% endblock content %}
+
+
+
+		
+	    
+                
+				
+				
+           
+		            
+		
+

@@ -1,0 +1,121 @@
+{% extends "ComplaintMS/index.html" %}
+{% load static %}
+{% block content %}
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Download Certificate</title>
+  <link href="{% static 'ComplaintMS/extra/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'ComplaintMS/css/simple-sidebar.css' %}" rel="stylesheet">
+  <style>
+  @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
+
+
+</style>
+
+
+</head>
+
+<div class="d-flex" id="wrapper">
+  <!-- Sidebar -->
+  <div class="bg-light border-right" id="sidebar-wrapper">
+    <div class="sidebar-heading"><i>GEyan</i></div>
+    <div class="list-group list-group-flush">
+      {% if user.is_authenticated %}
+        <a href="" class="list-group-item list-group-item-action active"> Welcome: {{ user.username }} </a>
+        <a href='/dashboard/' class="list-group-item list-group-item-action">Profile</a>
+        <a href='/password/' class="list-group-item list-group-item-action">Password Reset</a>
+        <a href="/askme/" class="list-group-item list-group-item-action">Ask Question</a>
+        <a href="/list/" class="list-group-item list-group-item-action">Unsolved Questions</a>
+        <a href="/slist/" class="list-group-item list-group-item-action">Solved Questions</a>
+        <a href="/certificate/" class="list-group-item list-group-item-action">Certificate</a>
+      <a href="/heat/" class="list-group-item list-group-item-action">HEAT</a>
+
+      {% endif %}
+    </div>
+  </div>
+  <!-- /#sidebar-wrapper -->
+
+  <!-- Page Content -->
+  <div id="page-content-wrapper">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+      <button class="btn btn-primary" id="menu-toggle">➡️</button>
+    </nav>
+    <br>
+    <div class="container">
+      <div class="card">
+        <div class="card-body">
+
+          <h4>Download Your Certificate</h4>
+          <hr>
+
+<br><br>
+          <p>Click the button below to download your personalized certificate.</p>
+          <canvas id="certificateCanvas" style="display: none;"></canvas>
+          <form id="certificateForm" method="post">
+            {% csrf_token %}
+            <button type="button" class="btn btn-primary" id="downloadButton">Download Certificate</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('downloadButton').addEventListener('click', function () {
+    // CSRF token for potential security checks
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    // Certificate Template
+    const certificateImageURL = "{% static 'ComplaintMS/img/1.png' %}";
+
+    // Create a canvas to draw the certificate
+    const canvas = document.getElementById('certificateCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Load the certificate template
+    const image = new Image();
+    image.src = certificateImageURL;
+
+    // Full Name of the User
+    const fullName = "{{ user.first_name }} {{ user.last_name }}";
+
+    // Load the Poppins font dynamically
+    document.fonts.load('16px "Poppins"').then(() => {
+      image.onload = function () {
+        // Set canvas size equal to the certificate template
+        canvas.width = image.width;
+        canvas.height = image.height;
+
+        // Draw the template on the canvas
+        ctx.drawImage(image, 0, 0);
+
+        // Customize the font for the user's full name
+        ctx.font = "50px 'Poppins'";
+        ctx.fillStyle = "black";
+        ctx.textAlign = "center";
+
+        // Add the user's full name dynamically
+        ctx.fillText(fullName, canvas.width / 2, canvas.height / 2);
+
+        // Generate the certificate as a downloadable image
+        const link = document.createElement('a');
+        link.download = `${fullName}_certificate.png`;
+        link.href = canvas.toDataURL();
+        link.click();
+      };
+    }).catch((error) => {
+      console.error("Font loading failed:", error);
+      alert("Error loading the font. Please try again.");
+    });
+  });
+
+  document.getElementById('menu-toggle').addEventListener('click', function (e) {
+    e.preventDefault();
+    document.getElementById('wrapper').classList.toggle('toggled');
+  });
+</script>
+
+{% endblock content %}

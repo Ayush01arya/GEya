@@ -1,0 +1,16 @@
+<!-- templates/complaint_detail.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>{{ complaint.title }}</h2>
+  <p><strong>Description:</strong> {{ complaint.description }}</p>
+  <p><strong>Date Filed:</strong> {{ complaint.date_filed }}</p>
+
+  {% if complaint.grievance_reply %}
+    <h3>Grievance Officer's Reply:</h3>
+    <p>{{ complaint.grievance_reply }}</p>
+    <p><strong>Date Replied:</strong> {{ complaint.date_replied }}</p>
+  {% else %}
+    <p><em>No reply yet.</em></p>
+  {% endif %}
+{% endblock %}

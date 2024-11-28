@@ -1,0 +1,189 @@
+{% extends "ComplaintMS/index.html" %}
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+
+{% block content %}
+<style>
+body {
+    background-color: #f8f9fa;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+}
+
+img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    max-width: 200px; /* Reduce image width */
+    margin: 0 auto;
+}
+
+.card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card-body {
+    text-align: center;
+}
+
+.header-section {
+    background: linear-gradient(to right, #343A40, #8796A6);
+    color: white;
+    padding: 60px 20px;
+    text-align: center;
+
+    margin-bottom: 50px;
+}
+
+.header-section h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.header-section p {
+    font-size: 1.25rem;
+    margin-bottom: 30px;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.card-text {
+    font-size: 1rem;
+    color: #555;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    padding: 12px 20px;
+    font-size: 18px;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+footer {
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: 50px;
+}
+
+footer a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 767px) {
+    .header-section h1 {
+        font-size: 2.5rem;
+    }
+    .header-section p {
+        font-size: 1rem;
+    }
+    .card-title {
+        font-size: 1.25rem;
+    }
+    .btn-primary {
+        font-size: 16px;
+    }
+}
+</style>
+
+{% load static %}
+
+<!-- Landing Page Content -->
+<div class="header-section">
+    <h1>Welcome to GEyan</h1>
+    <p>Your Personalized Career Guidance Portal</p>
+    <a href="#features" class="btn btn-primary">Explore Features</a>
+</div>
+
+<!-- Key Features Section -->
+<div id="features" class="container my-5">
+    <div class="row text-center">
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card">
+                <img src="{% static 'ComplaintMS/img/form.png' %}" width="50px" height="50px" class="card-img-top" alt="Ask Career Questions" >
+                <div class="card-body">
+                    <h5 class="card-title">Ask Career Questions</h5>
+                    <p class="card-text">Submit your career-related queries to get expert advice from Graphic Era College teachers.</p>
+                    <a href="#" class="btn btn-primary">Ask Now</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card">
+                <img src="{% static 'ComplaintMS/img/solved.png' %}" width="50px" height="50px" class="card-img-top" alt="Solve Questions">
+                <div class="card-body">
+                    <h5 class="card-title">Solve Questions</h5>
+                    <p class="card-text">Teachers can provide insightful answers to student questions regarding career choices.</p>
+                    <a href="#" class="btn btn-primary">Solve Now</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card">
+                <img src="{% static 'ComplaintMS/img/bars.png' %}" width="50px" height="50px" class="card-img-top" alt="View Stats">
+                <div class="card-body">
+                    <h5 class="card-title">Career Stats & Insights</h5>
+                    <p class="card-text">Get analytics about the most asked questions and track student engagement on career-related queries.</p>
+                    <a href="#" class="btn btn-primary">View Stats</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AI Chatbot Section -->
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card text-dark">
+                <img src="{% static 'ComplaintMS/img/seclgn.png' %}" class="card-img-top" alt="AI Chatbot">
+                <div class="card-body">
+                    <h5 class="card-title">AI-Powered Chatbot</h5>
+                    <p class="card-text">Get instant responses to your career-related queries with our AI-powered chatbot. The chatbot uses sentiment analysis to understand your mood and tone, providing more personalized assistance.</p>
+                    <a href="#" class="btn btn-primary">Chat Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer Section -->
+
+
+{% endblock %}
