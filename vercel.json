@@ -2,14 +2,17 @@
   "version": 2,
   "builds": [
     {
-      "src": "ComplaintMS/wsgi.py",
-      "use": "@vercel/python"
+      "src": "manage.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxDuration": 30
+      }
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "ComplaintMS/wsgi.py"
+      "dest": "/manage.py"
     }
   ]
 }
