@@ -1,20 +1,28 @@
 
 from django.http import HttpResponseRedirect
 
+import random
+
 from django.contrib.auth.models import User
-from django.core.mail import EmailMessage
+
+# A dictionary to store OTPs temporarily
+otp_storage = {}
+
+from django.contrib.auth import login as auth_login
+
+from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib import messages
+
+from django.core.mail import EmailMessage
+
 from django.urls import reverse
 
   # Ensure this is present
 
 from django.db.models import Count, Q
 
-import os
 
-from reportlab.lib.pagesizes import A4
-from reportlab.pdfgen import canvas
 
 import matplotlib
 matplotlib.use('Agg')
@@ -31,8 +39,7 @@ from .forms import UserRegisterForm,ProfileUpdateForm,UserProfileform,ComplaintF
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
-from django.core.mail import send_mail
-from datetime import datetime
+
 #page loading.
 def index(request):
     return render(request,"ComplaintMS/home.html")
@@ -40,8 +47,8 @@ def index(request):
 def aboutus(request):
     return render(request,"ComplaintMS/aboutus.html")
 
-def login(request):
-    return render(request,"ComplaintMS/login.html")
+# def login(request):
+#     return render(request,"ComplaintMS/login.html")
 
 def signin(request):
     return render(request,"ComplaintMS/signin.html")
@@ -101,6 +108,160 @@ def login_redirect(request):
         return HttpResponseRedirect('/dashboard/')
     else:
         return HttpResponseRedirect('/counter/')
+
+def send_otp(email):
+    try:
+        # Generate OTP
+        otp = random.randint(100000, 999999)
+        otp_storage[email] = otp
+
+        # Send OTP email
+        subject = "Your One-Time Password (OTP) for Verification"
+        message = "Please use the following OTP for verification."  # Fallback text for non-HTML email clients
+        html_message = f"""
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <style>
+                        .email-container {{
+                            font-family: Arial, sans-serif;
+                            max-width: 500px;
+                            margin: 0 auto;
+                            padding: 20px;
+                            background-color: #ffffff;
+                            border-radius: 8px;
+                            border: 1px solid #e0e0e0;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                            text-align: center;
+                        }}
+                        .header {{
+                            padding: 20px;
+                            background-color: #4CAF50;
+                            border-radius: 8px 8px 0 0;
+                        }}
+                        .header img {{
+                            max-width: 100px;
+                        }}
+                        .header h2 {{
+                            color: white;
+                            font-size: 22px;
+                            margin: 10px 0;
+                        }}
+                        .body-content {{
+                            padding: 20px;
+                            color: #333;
+                        }}
+                        .otp {{
+                            font-size: 32px;
+                            font-weight: bold;
+                            color: #4CAF50;
+                            background-color: #f1f8e9;
+                            border-radius: 8px;
+                            padding: 10px;
+                            margin: 20px 0;
+                            display: inline-block;
+                            letter-spacing: 4px;
+                        }}
+                        .message {{
+                            font-size: 16px;
+                            color: #555;
+                            line-height: 1.6;
+                        }}
+                        .footer {{
+                            font-size: 12px;
+                            color: #999;
+                            padding: 20px;
+                            border-top: 1px solid #e0e0e0;
+                            margin-top: 20px;
+                        }}
+                        .copyright {{
+                            text-align: center;
+                            color: #999;
+                            margin-top: 10px;
+                            font-size: 12px;
+                        }}
+                    </style>
+                </head>
+                <body>
+                    <div class="email-container">
+                        <div class="header">
+                            <img src="https://i.ibb.co/svwHBWv/logo0.png" alt="Logo" />
+                            <h2>Welcome to GEyan Portal</h2>
+                        </div>
+                        <div class="body-content">
+                            <p class="message">Hello User!</p>
+                            <p class="message">Thank you for using our service. To complete your verification, please use the following One-Time Password (OTP):</p>
+                            <div class="otp">{otp}</div>
+                            <p class="message">This code is valid for the next 10 minutes. For security reasons, please do not share it with anyone.</p>
+                            <p class="message">Once verified, you’ll be able to access your account and explore all our features.</p>
+                        </div>
+                        <div class="footer">
+                            <div class="copyright">
+                                © Copyright 2024, All Rights Reserved by Graphic Era
+                            </div>
+                        </div>
+                    </div>
+                </body>
+                </html>
+                """
+        send_mail(
+            subject=subject,
+            message=message,  # Plain-text fallback
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+            html_message=html_message,  # HTML content
+            fail_silently=False,
+        )
+        return True
+    except Exception as e:
+        print(f"Error sending email: {e}")
+        return False
+
+
+
+otp_storage = {}
+
+def login(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        otp = request.POST.get("otp")
+
+        # Step 1: If email is provided, generate and send OTP
+        if email and not otp:
+            try:
+                user = User.objects.get(email=email)
+
+                # Send OTP
+                if send_otp(email):
+                    messages.success(request, "An OTP has been sent to your registered email address.")
+                    return render(request, "ComplaintMS/login.html", {"email": email})
+                else:
+                    messages.error(request, "Failed to send OTP. Please try again.")
+            except User.DoesNotExist:
+                messages.error(request, "Email is not registered.")
+                return render(request, "ComplaintMS/login.html")
+
+        # Step 2: If OTP is provided, validate it
+        elif email and otp:
+            stored_otp = otp_storage.get(email)
+            if stored_otp and str(stored_otp) == otp:
+                try:
+                    user = User.objects.get(email=email)
+                    user.backend = 'django.contrib.auth.backends.ModelBackend'
+                    auth_login(request, user)
+                    del otp_storage[email]  # Clear OTP after successful login
+                    return redirect("dashboard")  # Replace with your redirect view
+                except User.DoesNotExist:
+                    messages.error(request, "User does not exist.")
+            else:
+                messages.error(request, "Invalid OTP.")
+            return render(request, "ComplaintMS/login.html", {"email": email})
+
+    return render(request, "ComplaintMS/login.html")
+
+
 
 @login_required
 def dashboard(request):
