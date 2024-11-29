@@ -47,8 +47,8 @@ def index(request):
 def aboutus(request):
     return render(request,"ComplaintMS/aboutus.html")
 
-# def login(request):
-#     return render(request,"ComplaintMS/login.html")
+def login(request):
+    return render(request,"ComplaintMS/login.html")
 
 def signin(request):
     return render(request,"ComplaintMS/signin.html")
