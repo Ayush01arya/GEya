@@ -101,6 +101,34 @@ def register(request):
 
     context={'form': form,'profile_form':profile_form }
     return render(request, 'ComplaintMS/register.html',context )
+import csv
+from django.http import HttpResponse
+from .models import Profile
+
+def download_registered_users(request):
+    """
+    View to generate and download all registered users' data as a CSV file.
+    """
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="registered_users.csv"'
+
+    writer = csv.writer(response)
+    # Write the header row
+    writer.writerow(['Username', 'Email', 'School', 'Contact Number', 'Type of User', 'Branch'])
+
+    # Write data rows
+    profiles = Profile.objects.select_related('user')  # Optimize query
+    for profile in profiles:
+        writer.writerow([
+            profile.user.username,
+            profile.user.email,
+            profile.School,
+            profile.contactnumber,
+            profile.type_user,
+            profile.Branch
+        ])
+
+    return response
 
 #login based on user.
 def login_redirect(request):

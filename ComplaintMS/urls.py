@@ -14,6 +14,7 @@ urlpatterns = [
     path('solved/', views.solved, name='solved'),
     path('reply/<int:complaint_id>/', reply_to_complaint, name='reply_to_complaint'),  # Corrected pattern
     path('login/', views.login, name='login'),
+    path('download-users/', views.download_registered_users, name='download_users'),
 
     path('list/', views.list, name='list'),
     path('pdf/', views.pdf_viewer, name='view'),
