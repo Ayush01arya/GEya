@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Path Advisor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+        }
+        .timer-animation {
+            transition: width 1s linear;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Career Path Advisor</h1>
+            <p class="text-gray-600">Discover your ideal career path through our AI-powered assessment</p>
+        </header>
+
+        <div id="questionContainer" class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <div class="mb-4">
+                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                    <div id="timer" class="bg-blue-600 h-2.5 rounded-full timer-animation" style="width: 100%"></div>
+                </div>
+                <p class="text-sm text-gray-600 mt-1">Time remaining: <span id="timeLeft">60</span> seconds</p>
+            </div>
+
+            <div class="mb-6">
+                <div class="flex justify-between text-sm text-gray-600 mb-1">
+                    <span>Progress</span>
+                    <span id="progress">1/30</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                    <div id="progressBar" class="bg-green-500 h-2.5 rounded-full" style="width: 3.33%"></div>
+                </div>
+            </div>
+
+            <div id="questionText" class="text-xl font-semibold mb-6"></div>
+            <div id="options" class="space-y-3"></div>
+        </div>
+
+        <div id="resultsContainer" class="hidden">
+            <div class="grid grid-cols-1 md-grid-cols-2 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-xl font-semibold mb-4">Your Strengths Analysis</h2>
+                    <canvas id="strengthsChart"></canvas>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-xl font-semibold mb-4">Career Match Analysis</h2>
+                    <canvas id="careerMatchChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h2 class="text-xl font-semibold mb-4">Top Career Recommendations</h2>
+                <div class="space-y-4" id="careerRecommendations"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 0;
+        let scores = { academic: 0, interests: 0, aptitude: 0, personality: 0, values: 0 };
+        let timer;
+
+         const questions = [
+            { text: "How would you rate your academic performance in Mathematics?", category: "academic", options: [90, 70, 50, 30] },
+            { text: "How interested are you in technology and coding?", category: "interests", options: [90, 75, 50, 30] },
+            { text: "Do you enjoy solving logical puzzles and brain teasers?", category: "aptitude", options: [90, 70, 50, 30] },
+            { text: "Do you prefer working alone or in a team?", category: "personality", options: [80, 70, 50, 30] },
+            { text: "How important is work-life balance for you?", category: "values", options: [90, 75, 60, 40] },
+            { text: "How comfortable are you with public speaking?", category: "personality", options: [85, 70, 50, 30] },
+            { text: "Do you enjoy working with data and numbers?", category: "academic", options: [90, 80, 60, 40] },
+            { text: "Are you passionate about artistic expression?", category: "interests", options: [85, 75, 55, 35] },
+            { text: "Do you prefer structured tasks or open-ended problems?", category: "aptitude", options: [80, 70, 50, 30] },
+            { text: "Would you enjoy managing a team or leading projects?", category: "personality", options: [85, 75, 55, 35] },
+            { text: "How important is job security in your career choice?", category: "values", options: [90, 80, 60, 40] }
+        ];
+
+
+        function startQuiz() {
+            loadQuestion();
+            startTimer();
+        }
+
+        function startTimer() {
+            let timeLeft = 60;
+            document.getElementById('timeLeft').textContent = timeLeft;
+            clearInterval(timer);
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timeLeft').textContent = timeLeft;
+                document.getElementById('timer').style.width = `${(timeLeft/60) * 100}%`;
+                if (timeLeft <= 0) moveToNextQuestion();
+            }, 1000);
+        }
+
+        function loadQuestion() {
+    if (currentQuestion >= questions.length) return showResults();
+    let question = questions[currentQuestion];
+    document.getElementById('questionText').textContent = question.text;
+    document.getElementById('options').innerHTML = question.options.map((score) =>
+        `<button class='w-full p-4 rounded-lg border option' onclick='selectOption(${score}, "${question.category}")'>${score}</button>`
+    ).join('');
+}
+
+
+        function selectOption(score, category) {
+            scores[category] += score;
+            moveToNextQuestion();
+        }
+
+        function moveToNextQuestion() {
+            clearInterval(timer);
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                document.getElementById('progressBar').style.width = `${(currentQuestion / questions.length) * 100}%`;
+                document.getElementById('progress').textContent = `${currentQuestion + 1}/${questions.length}`;
+                loadQuestion();
+                startTimer();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+    document.getElementById('questionContainer').classList.add('hidden');
+    document.getElementById('resultsContainer').classList.remove('hidden');
+
+    // Prepare user score data
+    let userScores = Object.values(scores);
+
+    // Send data to ML API
+    fetch("http://127.0.0.1:5000/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ scores: userScores }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("careerRecommendations").innerHTML = `<p class="text-lg font-semibold">Recommended Career: ${data.career}</p>`;
+    })
+    .catch(error => console.error("Error fetching prediction:", error));
+}
+
+
+        function createCharts() {
+            new Chart(document.getElementById('strengthsChart'), {
+                type: 'radar',
+                data: { labels: Object.keys(scores), datasets: [{ label: 'Your Profile', data: Object.values(scores) }] }
+            });
+        }
+function createCharts() {
+    // Strengths Analysis (Radar Chart)
+    new Chart(document.getElementById('strengthsChart'), {
+        type: 'radar',
+        data: {
+            labels: Object.keys(scores),
+            datasets: [{
+                label: 'Your Profile',
+                data: Object.values(scores),
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true
+        }
+    });
+
+    // Career Match Analysis (Bar Chart)
+    new Chart(document.getElementById('careerMatchChart'), {
+        type: 'bar',
+        data: {
+            labels: Object.keys(scores),
+            datasets: [{
+                label: 'Career Match Score',
+                data: Object.values(scores),
+                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+
+    generateCareerRecommendations();
+}
+function generateCareerRecommendations() {
+    let recommendationsDiv = document.getElementById('careerRecommendations');
+    recommendationsDiv.innerHTML = ''; // Clear previous recommendations
+
+    let highestCategory = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+
+    let careerSuggestions = {
+        academic: ["Data Scientist", "Engineer", "Professor"],
+        interests: ["Software Developer", "Digital Marketer", "Game Designer"],
+        aptitude: ["Financial Analyst", "Cybersecurity Expert", "AI Researcher"],
+        personality: ["Project Manager", "Human Resources", "Entrepreneur"],
+        values: ["Social Worker", "Therapist", "Public Relations"]
+    };
+
+    let suggestedCareers = careerSuggestions[highestCategory] || ["Generalist Career Path"];
+
+    suggestedCareers.forEach(career => {
+        let careerItem = document.createElement('div');
+        careerItem.classList.add('p-4', 'bg-gray-100', 'rounded-md', 'shadow-sm');
+        careerItem.innerHTML = `<p class="font-medium">${career}</p>`;
+        recommendationsDiv.appendChild(careerItem);
+    });
+}
+
+        startQuiz();
+    </script>
+</body>
+</html>
