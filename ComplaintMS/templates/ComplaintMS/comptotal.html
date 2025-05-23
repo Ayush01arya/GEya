@@ -28,25 +28,29 @@
 
     <!-- Sidebar -->
     <div class="bg-light border-right" id="sidebar-wrapper">
-      <div class="sidebar-heading"> <i>GEyan</i> </div>
-      <div class="list-group list-group-flush">
-        {% if user.is_authenticated  %}
-			     <a href="" class="list-group-item list-group-item-action active"> Welcome : {{user.username}} </a>
-              <a href='/dashboard/' class="list-group-item list-group-item-action">Profile</a>
-              <a href='/password/' class="list-group-item list-group-item-action">Password Reset</a>
+    <div class="sidebar-heading"><i>GEyan</i></div>
+    <div class="list-group list-group-flush">
+      {% if user.is_authenticated %}
+        <a href="" class="list-group-item list-group-item-action active"> Welcome: {{ user.username }} </a>
+        <a href='/dashboard/' class="list-group-item list-group-item-action">Profile</a>
+        <a href='/password/' class="list-group-item list-group-item-action">Password Reset</a>
+        <a href="/askme/" class="list-group-item list-group-item-action">Ask Question</a>
+        <a href="/list/" class="list-group-item list-group-item-action">Unsolved Questions</a>
+        <a href="/slist/" class="list-group-item list-group-item-action">Solved Questions</a>
+        <a href="/certificate/" class="list-group-item list-group-item-action">Certificate</a>
+      <a href="/heat/" class="list-group-item list-group-item-action">HEAT</a>
+      <a href="/career-roadmaps/" class="list-group-item list-group-item-action">Carrer Roadmaps</a>
+      <a href="/career-talks/" class="list-group-item list-group-item-action">Carrer Talks</a>
+      <a href="/resources/" class="list-group-item list-group-item-action">Resources</a>
+      <a href="/seminars/" class="list-group-item list-group-item-action">Seminars</a>
+      <a href="/success-stories/" class="list-group-item list-group-item-action">Success Stories</a>
 
-              <a href="/askme/" class="list-group-item list-group-item-action">Ask Question </a>
-              <a href="/list/" class="list-group-item list-group-item-action">UnSolved Question's</a>
-              <a href="/slist/" class="list-group-item list-group-item-action">Solved Question's</a>
-           <a href="/certificate/" class="list-group-item list-group-item-action">certificate</a>
-          <a href="/heat/" class="list-group-item list-group-item-action">HEAT</a>
 
 
-              {% endif %}
-              
-      </div>
+      {% endif %}
     </div>
-    <!-- /#sidebar-wrapper -->
+  </div>
+<!-- /#sidebar-wrapper -->
 
     <!-- Page Content -->
     <div id="page-content-wrapper">

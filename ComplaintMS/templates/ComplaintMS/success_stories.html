@@ -1,0 +1,83 @@
+{% extends "ComplaintMS/index.html" %}
+{% load static %}
+{% block content %}
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Success Stories</title>
+  <link href="{% static 'ComplaintMS/extra/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'ComplaintMS/css/simple-sidebar.css' %}" rel="stylesheet">
+
+
+
+</head>
+
+<div class="d-flex" id="wrapper">
+  <!-- Sidebar -->
+ <div class="bg-light border-right" id="sidebar-wrapper">
+    <div class="sidebar-heading"><i>GEyan</i></div>
+    <div class="list-group list-group-flush">
+      {% if user.is_authenticated %}
+        <a href="" class="list-group-item list-group-item-action active"> Welcome: {{ user.username }} </a>
+        <a href='/dashboard/' class="list-group-item list-group-item-action">Profile</a>
+        <a href='/password/' class="list-group-item list-group-item-action">Password Reset</a>
+        <a href="/askme/" class="list-group-item list-group-item-action">Ask Question</a>
+        <a href="/list/" class="list-group-item list-group-item-action">Unsolved Questions</a>
+        <a href="/slist/" class="list-group-item list-group-item-action">Solved Questions</a>
+        <a href="/certificate/" class="list-group-item list-group-item-action">Certificate</a>
+      <a href="/heat/" class="list-group-item list-group-item-action">HEAT</a>
+      <a href="/career-roadmaps/" class="list-group-item list-group-item-action">Carrer Roadmaps</a>
+      <a href="/career-talks/" class="list-group-item list-group-item-action">Carrer Talks</a>
+      <a href="/resources/" class="list-group-item list-group-item-action">Resources</a>
+      <a href="/seminars/" class="list-group-item list-group-item-action">Seminars</a>
+      <a href="/success-stories/" class="list-group-item list-group-item-action">Success Stories</a>
+
+
+
+      {% endif %}
+    </div>
+  </div>
+<div class="container mt-5">
+    <h2 class="text-center mb-4">🏆 Alumni Success Stories</h2>
+
+    <form method="get" class="mb-4 text-center">
+        <label for="stream">Filter by Stream:</label>
+        <select name="stream" id="stream" onchange="this.form.submit()">
+            <option value="all" {% if selected_stream == 'all' %}selected{% endif %}>All</option>
+            {% for stream in streams %}
+            <option value="{{ stream }}" {% if selected_stream == stream %}selected{% endif %}>{{ stream }}</option>
+            {% endfor %}
+        </select>
+    </form>
+
+    <div class="row">
+        {% for story in stories %}
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body d-flex">
+                    <img src="{{ story.image }}" alt="Alumni photo" class="rounded-circle me-3" width="100" height="100">
+                    <div>
+                        <h5>{{ story.name }}</h5>
+                        <p class="mb-1"><strong>Current Position:</strong> {{ story.current_position }}</p>
+                        <p class="mb-1"><strong>Graduation Year:</strong> {{ story.graduation_year }}</p>
+                        <p class="mb-1"><strong>Stream:</strong> {{ story.stream }}</p>
+                        <p><strong>Journey:</strong> {{ story.journey }}</p>
+                        <ul>
+                            {% for tip in story.tips %}
+                            <li>{{ tip }}</li>
+                            {% endfor %}
+                        </ul>
+                        <a href="{{ story.linkedin_url }}" target="_blank" class="btn btn-sm btn-outline-primary">LinkedIn</a>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <iframe width="100%" height="200" src="{{ story.interview_video }}" frameborder="0" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center">No success stories available for the selected stream.</p>
+        {% endfor %}
+    </div>
+</div></div>
+{% endblock %}

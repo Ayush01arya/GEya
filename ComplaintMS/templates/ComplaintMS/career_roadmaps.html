@@ -1,0 +1,189 @@
+{% extends "ComplaintMS/index.html" %}
+{% load static %}
+{% block content %}
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Career Roadmaps</title>
+  <link href="{% static 'ComplaintMS/extra/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'ComplaintMS/css/simple-sidebar.css' %}" rel="stylesheet">
+
+
+
+</head>
+
+<div class="d-flex" id="wrapper">
+  <!-- Sidebar -->
+ <div class="bg-light border-right" id="sidebar-wrapper">
+    <div class="sidebar-heading"><i>GEyan</i></div>
+    <div class="list-group list-group-flush">
+      {% if user.is_authenticated %}
+        <a href="" class="list-group-item list-group-item-action active"> Welcome: {{ user.username }} </a>
+        <a href='/dashboard/' class="list-group-item list-group-item-action">Profile</a>
+        <a href='/password/' class="list-group-item list-group-item-action">Password Reset</a>
+        <a href="/askme/" class="list-group-item list-group-item-action">Ask Question</a>
+        <a href="/list/" class="list-group-item list-group-item-action">Unsolved Questions</a>
+        <a href="/slist/" class="list-group-item list-group-item-action">Solved Questions</a>
+        <a href="/certificate/" class="list-group-item list-group-item-action">Certificate</a>
+      <a href="/heat/" class="list-group-item list-group-item-action">HEAT</a>
+      <a href="/career-roadmaps/" class="list-group-item list-group-item-action">Carrer Roadmaps</a>
+      <a href="/career-talks/" class="list-group-item list-group-item-action">Carrer Talks</a>
+      <a href="/resources/" class="list-group-item list-group-item-action">Resources</a>
+      <a href="/seminars/" class="list-group-item list-group-item-action">Seminars</a>
+      <a href="/success-stories/" class="list-group-item list-group-item-action">Success Stories</a>
+
+
+
+      {% endif %}
+    </div>
+  </div>
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">
+                        <i class="fas fa-route"></i> Career Roadmaps
+                    </h2>
+                    <p class="mb-0">Explore comprehensive career paths for different streams</p>
+                </div>
+
+                <div class="card-body">
+                    <!-- Stream Selection Tabs -->
+                    <ul class="nav nav-pills mb-4 justify-content-center" id="streamTabs">
+                        <li class="nav-item">
+                            <a class="nav-link {% if selected_stream == 'science' %}active{% endif %}"
+                               href="?stream=science">
+                                <i class="fas fa-atom"></i> Science
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if selected_stream == 'commerce' %}active{% endif %}"
+                               href="?stream=commerce">
+                                <i class="fas fa-chart-line"></i> Commerce
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if selected_stream == 'arts' %}active{% endif %}"
+                               href="?stream=arts">
+                                <i class="fas fa-palette"></i> Arts
+                            </a>
+                        </li>
+                    </ul>
+
+                    <!-- Current Roadmap Display -->
+                    <div class="roadmap-content">
+                        <div class="text-center mb-4">
+                            <h3 class="text-primary">{{ current_roadmap.title }}</h3>
+                            <hr class="w-50 mx-auto">
+                        </div>
+
+                        <div class="row">
+                            {% for path in current_roadmap.paths %}
+                            <div class="col-lg-4 col-md-6 mb-4">
+                                <div class="card h-100 border-0 shadow hover-shadow">
+                                    <div class="card-header bg-gradient-primary text-white">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-graduation-cap"></i> {{ path.career }}
+                                        </h5>
+                                    </div>
+
+                                    <div class="card-body">
+                                        <!-- After 10th Section -->
+                                        <div class="mb-3">
+                                            <h6 class="text-success">
+                                                <i class="fas fa-play-circle"></i> After 10th Grade
+                                            </h6>
+                                            <ul class="list-unstyled pl-3">
+                                                {% for step in path.after_10th %}
+                                                <li class="mb-1">
+                                                    <i class="fas fa-check-circle text-success"></i> {{ step }}
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+
+                                        <!-- After 12th Section -->
+                                        <div class="mb-3">
+                                            <h6 class="text-info">
+                                                <i class="fas fa-play-circle"></i> After 12th Grade
+                                            </h6>
+                                            <ul class="list-unstyled pl-3">
+                                                {% for step in path.after_12th %}
+                                                <li class="mb-1">
+                                                    <i class="fas fa-check-circle text-info"></i> {{ step }}
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+
+                                        <!-- Timeline -->
+                                        <div class="mb-3">
+                                            <h6 class="text-warning">
+                                                <i class="fas fa-clock"></i> Timeline
+                                            </h6>
+                                            <p class="text-muted">{{ path.timeline }}</p>
+                                        </div>
+
+                                        <!-- Top Colleges/Institutes -->
+                                        <div class="mb-3">
+                                            <h6 class="text-primary">
+                                                <i class="fas fa-university"></i>
+                                                {% if path.top_colleges %}Top Colleges{% else %}Top Institutes{% endif %}
+                                            </h6>
+                                            <div class="d-flex flex-wrap">
+                                                {% for college in path.top_colleges|default:path.top_institutions %}
+
+                                                <span class="badge badge-primary mr-1 mb-1">{{ college }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+
+                                        <!-- Salary Range -->
+                                        <div class="salary-info bg-light p-2 rounded">
+                                            <small class="text-muted">Expected Salary Range:</small>
+                                            <div class="font-weight-bold text-success">{{ path.salary_range }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add smooth scrolling to roadmap cards
+    const cards = document.querySelectorAll('.hover-shadow');
+
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+        });
+
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+
+    // Add loading animation
+    const roadmapContent = document.querySelector('.roadmap-content');
+    roadmapContent.style.opacity = '0';
+    roadmapContent.style.transform = 'translateY(20px)';
+
+    setTimeout(() => {
+        roadmapContent.style.transition = 'all 0.5s ease';
+        roadmapContent.style.opacity = '1';
+        roadmapContent.style.transform = 'translateY(0)';
+    }, 100);
+});
+</script>
+</div>
+
+{% endblock content %}

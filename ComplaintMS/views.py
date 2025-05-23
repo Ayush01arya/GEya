@@ -758,3 +758,436 @@ from .models import Complaint
 def all_complaints_view(request):
     complaints = Complaint.objects.all()  # Retrieve complaints
     return render(request, 'AllComplaints.html', {'complaints': complaints})
+
+
+# Add these imports to your existing views.py
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.core.paginator import Paginator
+import json
+
+
+# Add these new models (you'll need to create these in models.py)
+# from .models import CareerRoadmap, CareerTalk, Resource, AptitudeTest, Seminar, SuccessStory
+
+# Career Roadmaps View
+@login_required
+def career_roadmaps(request):
+    """Display stream-wise career roadmaps"""
+
+    # Roadmap data structure - standardized with 'top_institutions'
+    roadmaps = {
+        'science': {
+            'title': 'Science Stream Career Roadmap',
+            'paths': [
+                {
+                    'career': 'Engineering',
+                    'after_10th': ['Choose PCM (Physics, Chemistry, Math)', 'Focus on JEE preparation',
+                                   'Join coaching if needed'],
+                    'after_12th': ['Appear for JEE Main/Advanced', 'Apply to NITs, IITs, State colleges',
+                                   'Consider private colleges as backup'],
+                    'timeline': '4 years B.Tech → Job/M.Tech → Specialization',
+                    'top_institutions': ['IIT Delhi', 'IIT Bombay', 'NIT Trichy', 'BITS Pilani'],
+                    'salary_range': '₹3-50 LPA'
+                },
+                {
+                    'career': 'Medical',
+                    'after_10th': ['Choose PCB (Physics, Chemistry, Biology)', 'Start NEET preparation',
+                                   'Focus on NCERT thoroughly'],
+                    'after_12th': ['Clear NEET exam', 'Counseling for MBBS seats', 'Consider AIIMS/JIPMER'],
+                    'timeline': '5.5 years MBBS → 1 year Internship → PG/Practice',
+                    'top_institutions': ['AIIMS Delhi', 'CMC Vellore', 'KGMU', 'MAMC Delhi'],
+                    'salary_range': '₹5-100+ LPA'
+                },
+                {
+                    'career': 'Research',
+                    'after_10th': ['Choose PCM/PCB based on interest', 'Focus on conceptual understanding',
+                                   'Participate in science fairs'],
+                    'after_12th': ['B.Sc in chosen field', 'Maintain high GPA', 'Look for research opportunities'],
+                    'timeline': '3 years B.Sc → 2 years M.Sc → PhD → Research positions',
+                    'top_institutions': ['IISc Bangalore', 'IISERs', 'DU', 'JNU'],
+                    'salary_range': '₹4-30 LPA'
+                }
+            ]
+        },
+        'commerce': {
+            'title': 'Commerce Stream Career Roadmap',
+            'paths': [
+                {
+                    'career': 'Chartered Accountancy (CA)',
+                    'after_10th': ['Choose Commerce with Maths', 'Register for CA Foundation',
+                                   'Focus on Accounts & Maths'],
+                    'after_12th': ['Clear CA Foundation', 'Start CA Intermediate', 'Look for articleship'],
+                    'timeline': 'Foundation → Intermediate → Articleship → Final → Practice',
+                    'top_institutions': ['ICAI', 'Various coaching institutes'],
+                    'salary_range': '₹6-80+ LPA'
+                },
+                {
+                    'career': 'Company Secretary (CS)',
+                    'after_10th': ['Commerce stream', 'Good in law subjects', 'Register for CS Foundation'],
+                    'after_12th': ['CS Executive level', 'Training period', 'Professional course'],
+                    'timeline': 'Foundation → Executive → Professional → Practice',
+                    'top_institutions': ['ICSI', 'Various coaching centers'],
+                    'salary_range': '₹4-50 LPA'
+                },
+                {
+                    'career': 'MBA',
+                    'after_10th': ['Commerce/Any stream', 'Focus on communication skills', 'Leadership activities'],
+                    'after_12th': ['Any graduation', 'Work experience (optional)', 'CAT/XAT/GMAT preparation'],
+                    'timeline': 'Graduation → Work experience → MBA → Management roles',
+                    'top_institutions': ['IIM A/B/C', 'FMS Delhi', 'XLRI', 'ISB Hyderabad'],
+                    'salary_range': '₹8-100+ LPA'
+                }
+            ]
+        },
+        'arts': {
+            'title': 'Arts Stream Career Roadmap',
+            'paths': [
+                {
+                    'career': 'UPSC (Civil Services)',
+                    'after_10th': ['Arts with History/Political Science', 'Current affairs awareness',
+                                   'Strong foundation in social subjects'],
+                    'after_12th': ['Any graduation', 'Choose optional subject wisely', 'Start preparation early'],
+                    'timeline': 'Graduation → UPSC Preparation → Prelims → Mains → Interview',
+                    'top_institutions': ['Various coaching institutes', 'Self-study with good books'],
+                    'salary_range': '₹7-30 LPA (with allowances)'
+                },
+                {
+                    'career': 'Law',
+                    'after_10th': ['Arts/Commerce/Science', 'Good in English & reasoning', 'Debate participation'],
+                    'after_12th': ['CLAT preparation', 'Apply to NLUs', '5-year integrated course or 3-year LLB'],
+                    'timeline': '5 years BA LLB or Graduation + 3 years LLB → Practice/Corporate',
+                    'top_institutions': ['NLSIU Bangalore', 'NALSAR Hyderabad', 'NLU Delhi'],
+                    'salary_range': '₹3-200+ LPA'
+                },
+                {
+                    'career': 'Journalism & Mass Communication',
+                    'after_10th': ['Arts with English', 'Creative writing skills', 'Stay updated with current affairs'],
+                    'after_12th': ['Mass Communication course', 'Internships in media', 'Build portfolio'],
+                    'timeline': '3 years graduation → Specialization → Media industry',
+                    'top_institutions': ['IIMC Delhi', 'Jamia Millia', 'Xavier Institute'],
+                    'salary_range': '₹2-50+ LPA'
+                }
+            ]
+        }
+    }
+
+    selected_stream = request.GET.get('stream', 'science')
+    context = {
+        'roadmaps': roadmaps,
+        'selected_stream': selected_stream,
+        'current_roadmap': roadmaps.get(selected_stream, roadmaps['science'])
+    }
+    return render(request, 'ComplaintMS/career_roadmaps.html', context)
+
+
+# Career Talks View
+@login_required
+def career_talks(request):
+    """Display career talks and recorded sessions"""
+
+    # Sample career talks data (replace with database queries)
+    career_talks = [
+        {
+            'id': 1,
+            'title': 'How to Crack JEE Advanced - IIT Alumni Talk',
+            'speaker': 'Rahul Sharma (IIT Delhi, Software Engineer at Google)',
+            'youtube_url': 'https://www.youtube.com/embed/dQw4w9WgXcQ',  # Replace with actual URLs
+            'duration': '45 minutes',
+            'category': 'Engineering',
+            'date': '2024-01-15',
+            'views': 1250
+        },
+        {
+            'id': 2,
+            'title': 'NEET Strategy and Medical Career Guidance',
+            'speaker': 'Dr. Priya Patel (AIIMS Delhi)',
+            'youtube_url': 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+            'duration': '60 minutes',
+            'category': 'Medical',
+            'date': '2024-01-20',
+            'views': 980
+        },
+        {
+            'id': 3,
+            'title': 'CA Journey: From Student to Partner',
+            'speaker': 'CA Amit Kumar (Partner at Deloitte)',
+            'youtube_url': 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+            'duration': '40 minutes',
+            'category': 'Commerce',
+            'date': '2024-01-25',
+            'views': 756
+        },
+        {
+            'id': 4,
+            'title': 'UPSC Success Strategy - IAS Officer Interview',
+            'speaker': 'Ms. Anjali Singh (IAS 2019 Batch)',
+            'youtube_url': 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+            'duration': '50 minutes',
+            'category': 'Civil Services',
+            'date': '2024-02-01',
+            'views': 2100
+        }
+    ]
+
+    category_filter = request.GET.get('category', 'all')
+    if category_filter != 'all':
+        career_talks = [talk for talk in career_talks if talk['category'].lower() == category_filter.lower()]
+
+    context = {
+        'career_talks': career_talks,
+        'selected_category': category_filter,
+        'categories': ['Engineering', 'Medical', 'Commerce', 'Civil Services', 'Arts', 'Management']
+    }
+    return render(request, 'ComplaintMS/career_talks.html', context)
+
+
+# Resources View
+@login_required
+def resources(request):
+    """Display downloadable resources"""
+
+    resources = {
+        'colleges': {
+            'title': 'Top Colleges Lists',
+            'items': [
+                {'name': 'Top Engineering Colleges 2024', 'type': 'PDF', 'size': '2.5 MB', 'downloads': 1500},
+                {'name': 'Medical Colleges Ranking', 'type': 'PDF', 'size': '1.8 MB', 'downloads': 1200},
+                {'name': 'Commerce Colleges Guide', 'type': 'PDF', 'size': '1.2 MB', 'downloads': 800},
+                {'name': 'Arts & Humanities Colleges', 'type': 'PDF', 'size': '1.5 MB', 'downloads': 600}
+            ]
+        },
+        'scholarships': {
+            'title': 'Scholarship Information',
+            'items': [
+                {'name': 'National Scholarship Portal Guide', 'type': 'PDF', 'size': '3.0 MB', 'downloads': 2000},
+                {'name': 'Merit Scholarships List 2024', 'type': 'PDF', 'size': '2.2 MB', 'downloads': 1800},
+                {'name': 'Minority Scholarships Guide', 'type': 'PDF', 'size': '1.6 MB', 'downloads': 900},
+                {'name': 'International Scholarships', 'type': 'PDF', 'size': '2.8 MB', 'downloads': 1100}
+            ]
+        },
+        'career_guides': {
+            'title': 'Career Guidance PDFs',
+            'items': [
+                {'name': 'Complete Career Guide 2024', 'type': 'PDF', 'size': '5.0 MB', 'downloads': 3000},
+                {'name': 'Interview Preparation Guide', 'type': 'PDF', 'size': '2.0 MB', 'downloads': 2500},
+                {'name': 'Resume Building Templates', 'type': 'ZIP', 'size': '4.5 MB', 'downloads': 1900},
+                {'name': 'Soft Skills Development', 'type': 'PDF', 'size': '1.8 MB', 'downloads': 1400}
+            ]
+        },
+        'aptitude_tests': {
+            'title': 'Aptitude Test Links',
+            'items': [
+                {'name': 'Career Aptitude Assessment', 'type': 'Link', 'url': '#',
+                 'description': 'Comprehensive career assessment'},
+                {'name': 'Personality Test for Career', 'type': 'Link', 'url': '#',
+                 'description': 'Know your personality type'},
+                {'name': 'Skills Assessment Test', 'type': 'Link', 'url': '#',
+                 'description': 'Identify your strengths'},
+                {'name': 'Interest Inventory Test', 'type': 'Link', 'url': '#',
+                 'description': 'Discover your interests'}
+            ]
+        }
+    }
+
+    context = {'resources': resources}
+    return render(request, 'ComplaintMS/resources.html', context)
+
+
+# Career Aptitude Test View
+
+
+# Upcoming Seminars View
+@login_required
+def upcoming_seminars(request):
+    """Display upcoming seminars and events"""
+
+    seminars = [
+        {
+            'id': 1,
+            'title': 'Future of Artificial Intelligence Careers',
+            'speaker': 'Dr. Rajesh Kumar (IIT Bombay)',
+            'date': '2024-06-15',
+            'time': '10:00 AM',
+            'duration': '2 hours',
+            'platform': 'Google Meet',
+            'registration_link': '#',
+            'description': 'Explore career opportunities in AI and Machine Learning',
+            'category': 'Technology',
+            'seats_available': 500,
+            'registered': 234
+        },
+        {
+            'id': 2,
+            'title': 'Medical Career Beyond MBBS',
+            'speaker': 'Team of AIIMS Doctors',
+            'date': '2024-06-20',
+            'time': '2:00 PM',
+            'duration': '90 minutes',
+            'platform': 'Zoom',
+            'registration_link': '#',
+            'description': 'Alternative medical career paths and specializations',
+            'category': 'Medical',
+            'seats_available': 300,
+            'registered': 156
+        },
+        {
+            'id': 3,
+            'title': 'Digital Marketing Career Workshop',
+            'speaker': 'Industry Experts Panel',
+            'date': '2024-06-25',
+            'time': '4:00 PM',
+            'duration': '3 hours',
+            'platform': 'Microsoft Teams',
+            'registration_link': '#',
+            'description': 'Hands-on workshop on digital marketing careers',
+            'category': 'Marketing',
+            'seats_available': 200,
+            'registered': 89
+        }
+    ]
+
+    context = {'seminars': seminars}
+    return render(request, 'ComplaintMS/seminars.html', context)
+
+
+# Success Stories View
+@login_required
+def success_stories(request):
+    """Display alumni success stories"""
+
+    stories = [
+        {
+            'id': 1,
+            'name': 'Rohit Sharma',
+            'current_position': 'Software Engineer at Google',
+            'graduation_year': '2020',
+            'stream': 'Computer Science Engineering',
+            'journey': 'Started from a small town, cracked JEE Advanced, graduated from IIT Delhi, and now working at Google Mountain View.',
+            'image': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+            'linkedin_url': '#',
+            'tips': [
+                'Consistency is key in preparation',
+                'Never give up on your dreams',
+                'Practice coding daily',
+                'Build projects to showcase skills'
+            ],
+            'interview_video': 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+        },
+        {
+            'id': 2,
+            'name': 'Dr. Priya Mehta',
+            'current_position': 'Cardiologist at Apollo Hospital',
+            'graduation_year': '2018',
+            'stream': 'MBBS, MD Cardiology',
+            'journey': 'Cleared NEET in first attempt, completed MBBS from AIIMS Delhi, specialized in Cardiology, now serving patients.',
+            'image': 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face',
+            'linkedin_url': '#',
+            'tips': [
+                'NCERT is your best friend for NEET',
+                'Focus on understanding concepts',
+                'Time management is crucial',
+                'Stay updated with medical advancements'
+            ],
+            'interview_video': 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+        },
+        {
+            'id': 3,
+            'name': 'Ankit Agarwal',
+            'current_position': 'IAS Officer (District Collector)',
+            'graduation_year': '2019',
+            'stream': 'Political Science',
+            'journey': 'Graduated in Political Science, prepared for UPSC for 2 years, cleared in second attempt, now serving as District Collector.',
+            'image': 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+            'linkedin_url': '#',
+            'tips': [
+                'Read newspapers daily',
+                'Make concise notes',
+                'Practice answer writing',
+                'Stay motivated during preparation'
+            ],
+            'interview_video': 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+        },
+        {
+            'id': 4,
+            'name': 'Sneha Gupta',
+            'current_position': 'Creative Director at Ogilvy',
+            'graduation_year': '2021',
+            'stream': 'Mass Communication',
+            'journey': 'Studied Mass Communication, started as intern at local agency, worked hard, and now leading creative campaigns at Ogilvy.',
+            'image': 'https://images.unsplash.com/photo-1494790108755-2616b612b17c?w=150&h=150&fit=crop&crop=face',
+            'linkedin_url': '#',
+            'tips': [
+                'Build a strong portfolio',
+                'Network with industry professionals',
+                'Stay creative and innovative',
+                'Learn digital marketing tools'
+            ],
+            'interview_video': 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+        }
+    ]
+
+    # Filter by stream if requested
+    stream_filter = request.GET.get('stream', 'all')
+    if stream_filter != 'all':
+        stories = [story for story in stories if stream_filter.lower() in story['stream'].lower()]
+
+    context = {
+        'stories': stories,
+        'selected_stream': stream_filter,
+        'streams': ['Engineering', 'Medical', 'Civil Services', 'Arts', 'Commerce', 'Management']
+    }
+    return render(request, 'ComplaintMS/success_stories.html', context)
+
+
+# AJAX View for quick career suggestions
+@login_required
+def quick_career_suggestion(request):
+    """AJAX endpoint for quick career suggestions"""
+    if request.method == 'POST':
+        interests = request.POST.getlist('interests[]')
+
+        career_map = {
+            'technology': ['Software Developer', 'Data Scientist', 'Cybersecurity Expert'],
+            'medicine': ['Doctor', 'Nurse', 'Medical Researcher'],
+            'business': ['MBA', 'Entrepreneur', 'Business Analyst'],
+            'arts': ['Graphic Designer', 'Writer', 'Photographer'],
+            'law': ['Lawyer', 'Judge', 'Legal Advisor'],
+            'teaching': ['Professor', 'School Teacher', 'Corporate Trainer']
+        }
+
+        suggestions = []
+        for interest in interests:
+            if interest in career_map:
+                suggestions.extend(career_map[interest])
+
+        return JsonResponse({'suggestions': list(set(suggestions))})
+
+    return JsonResponse({'error': 'Invalid request'})
+
+
+# Resource Download View
+@login_required
+def download_resource(request, resource_id):
+    """Handle resource downloads (you'll need to implement actual file serving)"""
+    # This is a placeholder - implement actual file download logic
+    # You can track downloads, check permissions, etc.
+
+    # For now, just redirect to a placeholder
+    messages.success(request, f'Resource {resource_id} download started!')
+    return redirect('resources')
+
+
+# Seminar Registration View
+@login_required
+def register_seminar(request, seminar_id):
+    """Handle seminar registration"""
+    if request.method == 'POST':
+        # Add registration logic here
+        # You can store registration in database
+
+        messages.success(request, 'Successfully registered for the seminar!')
+        return redirect('seminars')
+
+    return redirect('seminars')

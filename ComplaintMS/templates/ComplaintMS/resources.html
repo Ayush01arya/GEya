@@ -1,0 +1,367 @@
+{% extends 'ComplaintMS/index.html' %}
+{% load static %}
+
+{% block content %}
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Resources</title>
+  <link href="{% static 'ComplaintMS/extra/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'ComplaintMS/css/simple-sidebar.css' %}" rel="stylesheet">
+
+
+
+</head>
+
+<div class="d-flex" id="wrapper">
+  <!-- Sidebar -->
+ <div class="bg-light border-right" id="sidebar-wrapper">
+    <div class="sidebar-heading"><i>GEyan</i></div>
+    <div class="list-group list-group-flush">
+      {% if user.is_authenticated %}
+        <a href="" class="list-group-item list-group-item-action active"> Welcome: {{ user.username }} </a>
+        <a href='/dashboard/' class="list-group-item list-group-item-action">Profile</a>
+        <a href='/password/' class="list-group-item list-group-item-action">Password Reset</a>
+        <a href="/askme/" class="list-group-item list-group-item-action">Ask Question</a>
+        <a href="/list/" class="list-group-item list-group-item-action">Unsolved Questions</a>
+        <a href="/slist/" class="list-group-item list-group-item-action">Solved Questions</a>
+        <a href="/certificate/" class="list-group-item list-group-item-action">Certificate</a>
+      <a href="/heat/" class="list-group-item list-group-item-action">HEAT</a>
+      <a href="/career-roadmaps/" class="list-group-item list-group-item-action">Carrer Roadmaps</a>
+      <a href="/career-talks/" class="list-group-item list-group-item-action">Carrer Talks</a>
+      <a href="/resources/" class="list-group-item list-group-item-action">Resources</a>
+      <a href="/seminars/" class="list-group-item list-group-item-action">Seminars</a>
+      <a href="/success-stories/" class="list-group-item list-group-item-action">Success Stories</a>
+
+
+
+      {% endif %}
+    </div>
+  </div>
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-lg">
+                <div class="card-header bg-success text-white">
+                    <h2 class="mb-0">
+                        <i class="fas fa-download"></i> Career Resources & Downloads
+                    </h2>
+                    <p class="mb-0">Access valuable resources to guide your career journey</p>
+                </div>
+                
+                <div class="card-body">
+                    <!-- Resources Categories -->
+                    {% for category_key, category_data in resources.items %}
+                    <div class="resource-category mb-5">
+                        <div class="category-header mb-3">
+                            <h3 class="text-primary">
+                                {% if category_key == 'colleges' %}
+                                    <i class="fas fa-university"></i>
+                                {% elif category_key == 'scholarships' %}
+                                    <i class="fas fa-graduation-cap"></i>
+                                {% elif category_key == 'career_guides' %}
+                                    <i class="fas fa-map"></i>
+                                {% elif category_key == 'aptitude_tests' %}
+                                    <i class="fas fa-clipboard-check"></i>
+                                {% endif %}
+                                {{ category_data.title }}
+                            </h3>
+                            <hr class="w-25" style="border-color: #007bff; border-width: 2px;">
+                        </div>
+                        
+                        <div class="row">
+                            {% for item in category_data.items %}
+                            <div class="col-lg-6 col-md-12 mb-3">
+                                <div class="card border-0 shadow-sm hover-card">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center">
+                                            <div class="file-icon mr-3">
+                                                {% if item.type == 'PDF' %}
+                                                    <i class="fas fa-file-pdf text-danger fa-2x"></i>
+                                                {% elif item.type == 'ZIP' %}
+                                                    <i class="fas fa-file-archive text-warning fa-2x"></i>
+                                                {% elif item.type == 'Link' %}
+                                                    <i class="fas fa-external-link-alt text-info fa-2x"></i>
+                                                {% endif %}
+                                            </div>
+                                            
+                                            <div class="flex-grow-1">
+                                                <h6 class="card-title mb-1">{{ item.name }}</h6>
+                                                
+                                                {% if item.type != 'Link' %}
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <small class="text-muted">
+                                                            <i class="fas fa-file"></i> {{ item.type }} • {{ item.size }}
+                                                        </small>
+                                                        <small class="text-success">
+                                                            <i class="fas fa-download"></i> {{ item.downloads }} downloads
+                                                        </small>
+                                                    </div>
+                                                    
+                                                    <button class="btn btn-primary btn-sm download-btn" 
+                                                            data-resource="{{ item.name }}">
+                                                        <i class="fas fa-download"></i> Download
+                                                    </button>
+                                                {% else %}
+                                                    <p class="text-muted mb-2 small">{{ item.description }}</p>
+                                                    <a href="{{ item.url }}" target="_blank" 
+                                                       class="btn btn-info btn-sm">
+                                                        <i class="fas fa-external-link-alt"></i> Take Test
+                                                    </a>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                    
+                    <!-- Quick Access Section -->
+                    <div class="quick-access-section mt-5">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body text-center">
+                                        <h4 class="text-primary mb-3">
+                                            <i class="fas fa-rocket"></i> Quick Access
+                                        </h4>
+                                        <div class="row">
+                                            <div class="col-md-3 col-sm-6 mb-3">
+                                                <a href="/aptitude_test/" class="btn btn-outline-primary btn-block">
+                                                    <i class="fas fa-brain"></i><br>
+                                                    Career Aptitude Test
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-6 mb-3">
+                                                <a href="/career_talks/" class="btn btn-outline-danger btn-block">
+                                                    <i class="fas fa-video"></i><br>
+                                                    Expert Sessions
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-6 mb-3">
+                                                <a href="/seminars/" class="btn btn-outline-success btn-block">
+                                                    <i class="fas fa-calendar"></i><br>
+                                                    Upcoming Seminars
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-6 mb-3">
+                                                <a href="/success_stories/" class="btn btn-outline-warning btn-block">
+                                                    <i class="fas fa-trophy"></i><br>
+                                                    Success Stories
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Download Modal -->
+<div class="modal fade" id="downloadModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-download"></i> Download Resource
+                </h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="download-icon mb-3">
+                    <i class="fas fa-file-download fa-3x text-success"></i>
+                </div>
+                <h6 id="downloadResourceName">Resource Name</h6>
+                <p class="text-muted">Your download will start shortly...</p>
+                <div class="progress mb-3">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                         role="progressbar" 
+                         style="width: 0%">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.hover-card {
+    transition: all 0.3s ease;
+}
+
+.hover-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.file-icon {
+    min-width: 60px;
+    text-align: center;
+}
+
+.resource-category {
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 2rem;
+}
+
+.resource-category:last-child {
+    border-bottom: none;
+}
+
+.category-header h3 {
+    font-weight: 600;
+}
+
+.download-btn {
+    transition: all 0.3s ease;
+}
+
+.download-btn:hover {
+    transform: scale(1.05);
+}
+
+.quick-access-section .btn {
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.quick-access-section .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.quick-access-section .btn i {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+}
+
+.progress-bar {
+    transition: width 0.5s ease;
+}
+
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .d-flex.align-items-center {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .file-icon {
+        margin-bottom: 1rem;
+    }
+    
+    .quick-access-section .btn {
+        height: 60px;
+        font-size: 0.8rem;
+    }
+}
+</style>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Download button functionality
+    const downloadButtons = document.querySelectorAll('.download-btn');
+    const downloadModal = new bootstrap.Modal(document.getElementById('downloadModal'));
+    const progressBar = document.querySelector('.progress-bar');
+    const resourceNameElement = document.getElementById('downloadResourceName');
+    
+    downloadButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const resourceName = this.getAttribute('data-resource');
+            resourceNameElement.textContent = resourceName;
+            
+            // Show modal
+            downloadModal.show();
+            
+            // Simulate download progress
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 30;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    
+                    // Show completion
+                    setTimeout(() => {
+                        downloadModal.hide();
+                        
+                        // Show success message
+                        showNotification('Download completed successfully!', 'success');
+                    }, 500);
+                }
+                
+                progressBar.style.width = progress + '%';
+            }, 300);
+        });
+    });
+    
+    // Animation on scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    });
+    
+    const cards = document.querySelectorAll('.hover-card');
+    cards.forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'all 0.5s ease';
+        observer.observe(card);
+    });
+});
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type} position-fixed`;
+    notification.style.cssText = `
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        min-width: 300px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    `;
+    notification.innerHTML = `
+        <i class="fas fa-check-circle"></i> ${message}
+        <button type="button" class="close ml-2" onclick="this.parentElement.remove()">
+            <span>&times;</span>
+        </button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.remove();
+        }
+    }, 3000);
+}
+</script></div>
+{% endblock content %}

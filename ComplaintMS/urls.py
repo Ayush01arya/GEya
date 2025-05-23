@@ -28,6 +28,20 @@ urlpatterns = [
     path('certificate/', views.certificate, name='certificate'),
     path('heat/', views.heat, name='heat'),
 
+    ##
+    path('career-roadmaps/', views.career_roadmaps, name='career_roadmaps'),
+    path('career-talks/', views.career_talks, name='career_talks'),
+    path('resources/', views.resources, name='resources'),
+    # path('aptitude-test/', views.career_aptitude_test, name='aptitude_test'),
+    path('seminars/', views.upcoming_seminars, name='seminars'),
+    path('success-stories/', views.success_stories, name='success_stories'),
+
+    # AJAX and utility URLs
+    path('quick-suggestion/', views.quick_career_suggestion, name='quick_suggestion'),
+    path('download/<int:resource_id>/', views.download_resource, name='download_resource'),
+    path('register-seminar/<int:seminar_id>/', views.register_seminar, name='register_seminar'),
+
+    ##
     path('password-reset/', auth_views.PasswordResetView.as_view(template_name='ComplaintMS/password_reset.html'), name='password_reset'),
     path('password-reset-done/', auth_views.PasswordResetDoneView.as_view(template_name='ComplaintMS/password_reset_done.html'), name='password_reset_done'),
     path('password-reset-confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='ComplaintMS/password_reset_confirm.html'), name='password_reset_confirm'),
